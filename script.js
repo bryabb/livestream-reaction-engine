@@ -1,4 +1,5 @@
 const stage = document.getElementById('stage');
+const EMOJIS = ['❤️', '👍', '🔥', '⭐'];
 const ICONS = [
     {
         name: 'heart',
@@ -62,15 +63,27 @@ function spawnGsap() {
       .to(el, { opacity: 0, duration: 1.2, ease: 'none' }, 1.8); 
 }
 
-document.getElementById('send').addEventListener('click', spawnGsap);
+let mode = 'css';
+const spawn = () => (mode == 'css' ? spawnCss() : spawnGsap());
+
+const speedInput = document.getElementById('speed');
+speedInput.disabled = true;
+
+document.getElementById('mode').addEventListener('click', (e) => {
+    mode = mode === 'css' ? 'gsap' : 'css';
+    e.target.textContent = 'Mode: ' + (mode === 'css' ? 'CSS' : 'GSAP');
+    speedInput.disabled = (mode === 'css');
+});
+
+document.getElementById('send').addEventListener('click', spawn);
 
 document.getElementById('spam').addEventListener('click', () => {
   for (let i = 0; i < 60; i++) {
-    setTimeout(spawnGsap, i * 50);
+    setTimeout(spawn, i * 50);
   }
 });
 
-document.getElementById('speed').addEventListener('input', (e) => {
+speedInput.addEventListener('input', (e) => {
     const v = parseFloat(e.target.value);
     gsap.globalTimeline.timeScale(v);
     document.getElementById('speedVal').textContent = v.toFixed(1) + 'x';
